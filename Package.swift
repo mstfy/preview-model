@@ -23,6 +23,10 @@ let package = Package(
         .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
       ]
     ),
-    .target(name: "PreviewModel", dependencies: ["PreviewModelMacros"])
+    .target(name: "PreviewModel", dependencies: ["PreviewModelMacros"]),
+    .testTarget(
+      name: "PreviewModelTests",
+      dependencies: ["PreviewModel"]
+    )
   ]
 )
