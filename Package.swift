@@ -24,9 +24,6 @@ let package = Package(
       ]
     ),
     .target(name: "PreviewModel", dependencies: ["PreviewModelMacros"]),
-    .testTarget(
-      name: "PreviewModelTests",
-      dependencies: ["PreviewModel"]
-    )
+    .testTarget(name: "PreviewModelTests", dependencies: ["PreviewModel"])
   ]
 )
