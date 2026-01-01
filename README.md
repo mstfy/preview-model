@@ -53,12 +53,9 @@ struct UserRow_Previews: PreviewProvider {
 ```
 
 ## Collection Preview Values
-Generate collections with a specific count using `previewValues(count:)`:
+Generate Sets and Dictionaries with a specific count using `previewValues(count:)`:
 
 ```swift
-// Arrays - any element conforming to PreviewValueProtocol
-let users = [User].previewValues(count: 10)
-
 // Sets - requires IndexedPreviewValueProtocol for uniqueness
 let tags = Set<String>.previewValues(count: 5)
 // -> {"previewValue_0", "previewValue_1", "previewValue_2", "previewValue_3", "previewValue_4"}
@@ -66,6 +63,11 @@ let tags = Set<String>.previewValues(count: 5)
 // Dictionaries - keys must conform to IndexedPreviewValueProtocol
 let scores = [String: Int].previewValues(count: 3)
 // -> ["previewValue_0": 0, "previewValue_1": 0, "previewValue_2": 0]
+```
+
+For Arrays, use the built-in initializer:
+```swift
+let users = Array(repeating: User.previewValue, count: 10)
 ```
 
 ### Using Custom Types in Sets and Dictionaries

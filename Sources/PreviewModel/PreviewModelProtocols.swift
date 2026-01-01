@@ -5,7 +5,7 @@ import Foundation
 /// A type that provides a default preview value for SwiftUI previews and testing.
 ///
 /// Conform to this protocol to enable automatic preview data generation.
-/// Types conforming to this protocol can be used as Array elements.
+/// Types conforming to this protocol can be used as elements in collections.
 ///
 /// Example:
 /// ```swift
@@ -27,7 +27,8 @@ public protocol PreviewValueProtocol {
 ///
 /// Example:
 /// ```swift
-/// let users = [User].previewValues(count: 10)
+/// let tags = Set<String>.previewValues(count: 5)
+/// let scores = [String: Int].previewValues(count: 3)
 /// ```
 public protocol PreviewCollectionValueProtocol where Self: Collection {
     /// Creates a collection with the specified number of preview elements.
@@ -70,16 +71,7 @@ public extension Optional where Wrapped: PreviewValueProtocol {
 extension Array: PreviewValueProtocol where Element: PreviewValueProtocol {
     /// Returns an array with 5 elements using `Element.previewValue`.
     public static var previewValue: Array<Element> {
-        previewValues(count: 5)
-    }
-}
-
-extension Array: PreviewCollectionValueProtocol where Element: PreviewValueProtocol {
-    /// Creates an array with the specified count of `Element.previewValue` instances.
-    /// - Parameter count: Number of elements to generate.
-    /// - Returns: Array with `count` elements.
-    public static func previewValues(count: UInt) -> Array<Element> {
-        (0..<count).map { _ in Element.previewValue }
+        Array(repeating: Element.previewValue, count: 5)
     }
 }
 

@@ -3,19 +3,8 @@ import Foundation
 @testable import PreviewModel
 
 // MARK: - Array Tests
-@Suite("Array PreviewCollectionValueProtocol Tests")
+@Suite("Array PreviewValueProtocol Tests")
 struct ArrayPreviewTests {
-
-    @Test("Array previewValues returns correct count")
-    func arrayPreviewValuesCount() {
-        let array0 = [String].previewValues(count: 0)
-        let array3 = [String].previewValues(count: 3)
-        let array10 = [Int].previewValues(count: 10)
-
-        #expect(array0.count == 0)
-        #expect(array3.count == 3)
-        #expect(array10.count == 10)
-    }
 
     @Test("Array previewValue returns 5 elements by default")
     func arrayPreviewValueDefault() {
@@ -28,17 +17,11 @@ struct ArrayPreviewTests {
 
     @Test("Array elements use Element.previewValue")
     func arrayElementsUsePreviewValue() {
-        let strings = [String].previewValues(count: 3)
-        let ints = [Int].previewValues(count: 3)
+        let strings = [String].previewValue
+        let ints = [Int].previewValue
 
         #expect(strings.allSatisfy { $0 == String.previewValue })
         #expect(ints.allSatisfy { $0 == Int.previewValue })
-    }
-
-    @Test("Array with large count works correctly")
-    func arrayLargeCount() {
-        let large = [String].previewValues(count: 1000)
-        #expect(large.count == 1000)
     }
 }
 
@@ -214,31 +197,20 @@ struct EdgeCaseTests {
 
     @Test("Empty collections are handled correctly")
     func emptyCollections() {
-        let emptyArray = [String].previewValues(count: 0)
         let emptySet = Set<Int>.previewValues(count: 0)
         let emptyDict = [String: Bool].previewValues(count: 0)
 
-        #expect(emptyArray.isEmpty)
         #expect(emptySet.isEmpty)
         #expect(emptyDict.isEmpty)
     }
 
     @Test("Single element collections work correctly")
     func singleElementCollections() {
-        let array = [String].previewValues(count: 1)
         let set = Set<Int>.previewValues(count: 1)
         let dict = [String: Bool].previewValues(count: 1)
 
-        #expect(array.count == 1)
         #expect(set.count == 1)
         #expect(dict.count == 1)
-    }
-
-    @Test("Nested arrays work correctly")
-    func nestedArrays() {
-        let nested = [[String]].previewValues(count: 3)
-        #expect(nested.count == 3)
-        #expect(nested.allSatisfy { $0.count == 5 }) // Inner arrays use previewValue (5 elements)
     }
 }
 
@@ -314,13 +286,6 @@ struct OptionalSupportTests {
 // MARK: - Determinism Tests
 @Suite("Determinism Tests")
 struct DeterminismTests {
-
-    @Test("Array previewValues is deterministic")
-    func arrayDeterminism() {
-        let first = [String].previewValues(count: 5)
-        let second = [String].previewValues(count: 5)
-        #expect(first == second)
-    }
 
     @Test("Set previewValues is deterministic")
     func setDeterminism() {
