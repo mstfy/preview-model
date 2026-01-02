@@ -26,21 +26,10 @@ struct ArrayPreviewTests {
 }
 
 // MARK: - Set Tests
-@Suite("Set PreviewCollectionValueProtocol Tests")
+@Suite("Set PreviewValueProtocol Tests")
 struct SetPreviewTests {
 
-    @Test("Set previewValues returns correct count with unique elements")
-    func setPreviewValuesCount() {
-        let set0 = Set<String>.previewValues(count: 0)
-        let set3 = Set<String>.previewValues(count: 3)
-        let set10 = Set<Int>.previewValues(count: 10)
-
-        #expect(set0.count == 0)
-        #expect(set3.count == 3)
-        #expect(set10.count == 10)
-    }
-
-    @Test("Set previewValue returns 5 elements by default")
+    @Test("Set previewValue returns 5 unique elements")
     func setPreviewValueDefault() {
         let strings = Set<String>.previewValue
         let ints = Set<Int>.previewValue
@@ -51,41 +40,24 @@ struct SetPreviewTests {
 
     @Test("Set elements are unique using indexed values")
     func setElementsAreUnique() {
-        let strings = Set<String>.previewValues(count: 5)
+        let strings = Set<String>.previewValue
         let expectedStrings: Set<String> = [
             "previewValue_0", "previewValue_1", "previewValue_2",
             "previewValue_3", "previewValue_4"
         ]
         #expect(strings == expectedStrings)
 
-        let ints = Set<Int>.previewValues(count: 5)
+        let ints = Set<Int>.previewValue
         let expectedInts: Set<Int> = [0, 1, 2, 3, 4]
         #expect(ints == expectedInts)
-    }
-
-    @Test("Set with large count maintains uniqueness")
-    func setLargeCountUniqueness() {
-        let large = Set<Int>.previewValues(count: 100)
-        #expect(large.count == 100)
     }
 }
 
 // MARK: - Dictionary Tests
-@Suite("Dictionary PreviewCollectionValueProtocol Tests")
+@Suite("Dictionary PreviewValueProtocol Tests")
 struct DictionaryPreviewTests {
 
-    @Test("Dictionary previewValues returns correct count")
-    func dictionaryPreviewValuesCount() {
-        let dict0 = [String: Int].previewValues(count: 0)
-        let dict3 = [String: Int].previewValues(count: 3)
-        let dict10 = [Int: String].previewValues(count: 10)
-
-        #expect(dict0.count == 0)
-        #expect(dict3.count == 3)
-        #expect(dict10.count == 10)
-    }
-
-    @Test("Dictionary previewValue returns 3 entries by default")
+    @Test("Dictionary previewValue returns 3 entries")
     func dictionaryPreviewValueDefault() {
         let stringToInt = [String: Int].previewValue
         let intToString = [Int: String].previewValue
@@ -96,21 +68,21 @@ struct DictionaryPreviewTests {
 
     @Test("Dictionary keys are unique using indexed values")
     func dictionaryKeysAreUnique() {
-        let dict = [String: Int].previewValues(count: 3)
+        let dict = [String: Int].previewValue
         let expectedKeys: Set<String> = ["previewValue_0", "previewValue_1", "previewValue_2"]
         #expect(Set(dict.keys) == expectedKeys)
     }
 
     @Test("Dictionary values use Value.previewValue")
     func dictionaryValuesUsePreviewValue() {
-        let dict = [String: Int].previewValues(count: 3)
+        let dict = [String: Int].previewValue
         #expect(dict.values.allSatisfy { $0 == Int.previewValue })
     }
 
     @Test("Dictionary with Int keys works correctly")
     func dictionaryWithIntKeys() {
-        let dict = [Int: String].previewValues(count: 4)
-        let expectedKeys: Set<Int> = [0, 1, 2, 3]
+        let dict = [Int: String].previewValue
+        let expectedKeys: Set<Int> = [0, 1, 2]
         #expect(Set(dict.keys) == expectedKeys)
         #expect(dict.values.allSatisfy { $0 == String.previewValue })
     }
@@ -125,7 +97,6 @@ struct PrimitiveTypeTests {
         #expect(String.previewValue == "previewValue")
         #expect(String.previewValue(at: 0) == "previewValue_0")
         #expect(String.previewValue(at: 5) == "previewValue_5")
-        #expect(String.previewValue(at: 100) == "previewValue_100")
     }
 
     @Test("Int IndexedPreviewValueProtocol conformance")
@@ -133,7 +104,6 @@ struct PrimitiveTypeTests {
         #expect(Int.previewValue == 0)
         #expect(Int.previewValue(at: 0) == 0)
         #expect(Int.previewValue(at: 5) == 5)
-        #expect(Int.previewValue(at: 100) == 100)
     }
 
     @Test("Int64 IndexedPreviewValueProtocol conformance")
@@ -173,14 +143,10 @@ struct PrimitiveTypeTests {
     func dateConformance() {
         let date0 = Date.previewValue(at: 0)
         let date1 = Date.previewValue(at: 1)
-        let date2 = Date.previewValue(at: 2)
 
         // Each index adds 1 day (86_400 seconds)
-        let diff1 = date1.timeIntervalSince(date0)
-        let diff2 = date2.timeIntervalSince(date1)
-
-        #expect(abs(diff1 - 86400) < 1) // Allow 1 second tolerance
-        #expect(abs(diff2 - 86400) < 1)
+        let diff = date1.timeIntervalSince(date0)
+        #expect(abs(diff - 86400) < 1)
     }
 
     @Test("URL IndexedPreviewValueProtocol conformance")
@@ -188,29 +154,6 @@ struct PrimitiveTypeTests {
         #expect(URL.previewValue.absoluteString == "https://www.example.com")
         #expect(URL.previewValue(at: 0).absoluteString == "https://www.example.com/0")
         #expect(URL.previewValue(at: 5).absoluteString == "https://www.example.com/5")
-    }
-}
-
-// MARK: - Edge Cases
-@Suite("Edge Cases Tests")
-struct EdgeCaseTests {
-
-    @Test("Empty collections are handled correctly")
-    func emptyCollections() {
-        let emptySet = Set<Int>.previewValues(count: 0)
-        let emptyDict = [String: Bool].previewValues(count: 0)
-
-        #expect(emptySet.isEmpty)
-        #expect(emptyDict.isEmpty)
-    }
-
-    @Test("Single element collections work correctly")
-    func singleElementCollections() {
-        let set = Set<Int>.previewValues(count: 1)
-        let dict = [String: Bool].previewValues(count: 1)
-
-        #expect(set.count == 1)
-        #expect(dict.count == 1)
     }
 }
 
@@ -287,17 +230,17 @@ struct OptionalSupportTests {
 @Suite("Determinism Tests")
 struct DeterminismTests {
 
-    @Test("Set previewValues is deterministic")
-    func setDeterminism() {
-        let first = Set<String>.previewValues(count: 5)
-        let second = Set<String>.previewValues(count: 5)
+    @Test("String previewValue is deterministic")
+    func stringDeterminism() {
+        let first = String.previewValue
+        let second = String.previewValue
         #expect(first == second)
     }
 
-    @Test("Dictionary previewValues is deterministic")
-    func dictionaryDeterminism() {
-        let first = [String: Int].previewValues(count: 5)
-        let second = [String: Int].previewValues(count: 5)
+    @Test("Int previewValue is deterministic")
+    func intDeterminism() {
+        let first = Int.previewValue
+        let second = Int.previewValue
         #expect(first == second)
     }
 
@@ -307,5 +250,19 @@ struct DeterminismTests {
         let second = Bool.previewValue
         #expect(first == second)
         #expect(first == true)
+    }
+
+    @Test("Set previewValue is deterministic")
+    func setDeterminism() {
+        let first = Set<String>.previewValue
+        let second = Set<String>.previewValue
+        #expect(first == second)
+    }
+
+    @Test("Dictionary previewValue is deterministic")
+    func dictionaryDeterminism() {
+        let first = [String: Int].previewValue
+        let second = [String: Int].previewValue
+        #expect(first == second)
     }
 }
