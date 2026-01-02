@@ -75,11 +75,33 @@ extension User {
 - `Bool` -> `true`
 - `Date` -> `Date()`
 - `URL` -> `https://www.example.com`
-- `Array<Primitive>` -> 5 elements
+- `Array<T>` -> 5 elements
+- `Set<T>` -> 5 unique elements (requires `IndexedPreviewValueProtocol`)
+- `[K: V]` -> 3 entries (requires key to conform to `IndexedPreviewValueProtocol`)
 - `Optional<T>` -> `T.previewValue` (non-nil)
-- `Set<T>` -> 5 elements
-- `[String: T]` -> 1-3 key/value pairs
-- Property names containing `id` or `image`/`icon` get specialized values
+- Property names containing `id` get random unique values
+- Property names containing `image`/`icon` with URL type get image URLs
+
+### Using custom types in Set or Dictionary
+For custom types to work as Set elements or Dictionary keys, conform to `IndexedPreviewValueProtocol`:
+
+```swift
+@PreviewModel
+struct Tag: Hashable {
+  let id: Int
+  let name: String
+}
+
+extension Tag: IndexedPreviewValueProtocol {
+  static func previewValue(at index: UInt) -> Tag {
+    Tag(id: Int(index), name: "tag_\(index)")
+  }
+}
+
+// Now Tag can be used in Set and as Dictionary keys
+// Set<Tag>.previewValue -> 5 unique tags
+// [Tag: String].previewValue -> 3 entries
+```
 
 ## Enum support
 - If the enum is `CaseIterable`, the first case is used
@@ -89,4 +111,3 @@ extension User {
 - Stored properties must have explicit types
 - Computed properties and `private`/`fileprivate` stored properties are ignored
 - `let` properties with a default value are ignored (to avoid double init)
-
